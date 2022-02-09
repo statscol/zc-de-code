@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  
+  back-py:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: back-sender 
+    depends_on:
+      - "db"
+    command: "python3 ingest_data.py --url https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.csv --filename yellow_tripdata_2021-01.csv --table taxi_data_2021 --user postgres --password postgres --host database_postgres --db taxidb --port 5432"
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER : postgres
+      POSTGRES_PASSWORD : postgres
+      POSTGRES_DB : taxidb
+    ports:
+      - "6001:5432"
+    volumes:
+      - ./ny_taxi_postgres_data:/var/lib/postgresql/data:rw
+    container_name: database_postgres
+   
+   
+
